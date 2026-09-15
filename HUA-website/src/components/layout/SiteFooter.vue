@@ -1,4 +1,8 @@
 <script setup>
+import { useLangStore } from '@/stores/lang'
+
+const lang = useLangStore()
+
 const planLinks = [
   { href: 'https://hetutrechtsarchief.nl/expo', label: 'Expo - Hamburgerstraat 28' },
   { href: 'https://hetutrechtsarchief.nl/studiezaal-en-depot', label: 'Studiezaal - Alexander Numankade 199 - 201' },
@@ -63,7 +67,9 @@ const socialLinks = [
               <a :href="link.href">{{ link.label }}</a>
             </li>
             <li>
-              <a href="https://hetutrechtsarchief.nl/english" class="footer-link-italic">English</a>
+              <button type="button" class="footer-link-italic footer-lang-toggle" @click="lang.toggle">
+                {{ lang.t('header.langToggle') }}
+              </button>
             </li>
           </ul>
         </div>

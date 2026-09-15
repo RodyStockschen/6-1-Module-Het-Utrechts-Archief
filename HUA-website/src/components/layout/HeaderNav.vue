@@ -1,13 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useLangStore } from '@/stores/lang'
+
+const lang = useLangStore()
 
 const dropdownOpen = ref(null)
 const searchOpen = ref(false)
 
-const menuItems = [
+const menuItems = computed(() => [
   {
     key: 'onderzoek',
-    label: 'Onderzoek',
+    label: lang.t('header.menu.onderzoek'),
     className: 'onderzoek_nav',
     items: [
       { href: 'https://hetutrechtsarchief.nl/onderzoek/collecties?view=collections', label: 'Collecties' },
@@ -23,7 +26,7 @@ const menuItems = [
   },
   {
     key: 'ontdekken',
-    label: 'Ontdekken',
+    label: lang.t('header.menu.ontdekken'),
     className: 'ontdekken_dropdown',
     items: [
       { href: 'https://hetutrechtsarchief.nl/ontdekken/tentoonstellingen', label: 'Tentoonstellingen' },
@@ -38,7 +41,7 @@ const menuItems = [
   },
   {
     key: 'onderwijs',
-    label: 'Onderwijs',
+    label: lang.t('header.menu.onderwijs'),
     className: 'onderwijs_dropdown',
     items: [
       { href: 'https://hetutrechtsarchief.nl/onderwijs/basis-onderwijs', label: 'Primair onderwijs' },
@@ -51,7 +54,7 @@ const menuItems = [
   },
   {
     key: 'vakgenoten',
-    label: 'Vakgenoten',
+    label: lang.t('header.menu.vakgenoten'),
     className: 'vakgenoten_dropdown',
     items: [
       { href: 'https://hetutrechtsarchief.nl/vakgenoten/e-depot', label: 'e-depot' },
@@ -62,7 +65,7 @@ const menuItems = [
   },
   {
     key: 'overons',
-    label: 'Over ons',
+    label: lang.t('header.menu.overons'),
     className: 'overons_dropdown',
     items: [
       { href: 'https://hetutrechtsarchief.nl/over-ons/archief-overdragen', label: 'Archief overdragen' },
@@ -76,7 +79,7 @@ const menuItems = [
       { href: 'https://hetutrechtsarchief.nl/over-ons/heeft-u-een-klacht', label: 'Heeft u een klacht?' },
     ],
   },
-]
+])
 
 function toggleDropdown(key) {
   dropdownOpen.value = dropdownOpen.value === key ? null : key
@@ -103,10 +106,10 @@ function sluitDropdowns(event) {
         @click.stop="toggleSearch"
       >
         <span v-if="!searchOpen" class="search_icon" aria-hidden="true">
-          <img src="/img/search_icon.png" alt="Zoek icoon" />
+          <img src="/img/search_icon.png" :alt="lang.t('header.searchIconAlt')" />
         </span>
         <span v-else style="font-size: 2rem; color: white;">✕</span>
-        <span class="search_openen_">Zoeken openen</span>
+        <span class="search_openen_">{{ lang.t('header.searchOpenen') }}</span>
       </button>
 
       <nav class="main-nav" aria-label="Hoofdmenu">
@@ -132,11 +135,17 @@ function sluitDropdowns(event) {
           </li>
 
           <li class="contact_nav">
-            <a href="https://hetutrechtsarchief.nl/contact" class="main-nav__link main-nav__link--plain">Contact</a>
+            <a href="https://hetutrechtsarchief.nl/contact" class="main-nav__link main-nav__link--plain">{{ lang.t('header.contact') }}</a>
           </li>
 
           <li class="english_nav">
-            <a href="https://hetutrechtsarchief.nl/english" class="main-nav__link main-nav__link--italic">English</a>
+            <button
+              type="button"
+              class="main-nav__link main-nav__link--italic main-nav__lang-toggle"
+              @click.stop="lang.toggle"
+            >
+              {{ lang.t('header.langToggle') }}
+            </button>
           </li>
         </ul>
       </nav>
@@ -148,8 +157,8 @@ function sluitDropdowns(event) {
 
     <div class="search-bar" id="site-search" :hidden="!searchOpen">
       <form action="#" method="get" class="search-bar__form" @submit.prevent>
-        <input type="search" name="q" placeholder="Ik ben op zoek naar…" />
-        <button type="submit">Zoeken ›</button>
+        <input type="search" name="q" :placeholder="lang.t('header.searchPlaceholder')" />
+        <button type="submit">{{ lang.t('header.searchSubmit') }}</button>
       </form>
     </div>
   </header>

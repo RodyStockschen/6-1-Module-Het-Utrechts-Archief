@@ -170,6 +170,7 @@ onUnmounted(() => cleanupViewer?.())
         :class="{ 'is-active': i - 1 === activeIdx }"
         :title="`Spring naar foto ${i}`"
         :data-index="i"
+        @mousedown.prevent
         @click.stop="gotoIndex(i - 1)"
       >
         <img :src="`/img-afgesneden/${i}.jpg`" :alt="`Deel ${i}`" class="minimap-thumb" />

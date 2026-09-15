@@ -5,15 +5,19 @@ import { useArtikelenStore } from '@/stores/artikelen'
 const store = useArtikelenStore()
 
 const editorRef = ref(null)
+const scrollRef = ref(null)
 const working = ref([])
 const activeId = ref(null)
 const saving = ref(false)
 const msg = ref(null)
 
 const dragState = ref(null)
-const zoom = ref(1)
-const minZoom = 0.4
-const maxZoom = 2.5
+// Tiles render at real panorama size (var(--panorama-foto-height)) so 1px
+// moved here = 1px on the live site. Default zoom just fits that into view.
+const DEFAULT_ZOOM = 0.48
+const zoom = ref(DEFAULT_ZOOM)
+const minZoom = 0.2
+const maxZoom = 1.5
 const zoomPercent = computed(() => Math.round(zoom.value * 100))
 
 const MARGIN_TOP_MIN = -50
@@ -25,12 +29,25 @@ function clampMarginTop(v) {
 
 function onWheel(event) {
   event.preventDefault()
-  const delta = event.deltaY < 0 ? 0.1 : -0.1
-  zoom.value = Math.max(minZoom, Math.min(maxZoom, zoom.value + delta))
+  const el = scrollRef.value
+  if (!el) return
+  if (event.shiftKey) {
+    el.scrollTop += event.deltaY + event.deltaX
+  } else {
+    el.scrollLeft += event.deltaY + event.deltaX
+  }
+}
+
+function zoomIn() {
+  zoom.value = Math.min(maxZoom, +(zoom.value + 0.1).toFixed(2))
+}
+
+function zoomOut() {
+  zoom.value = Math.max(minZoom, +(zoom.value - 0.1).toFixed(2))
 }
 
 function resetZoom() {
-  zoom.value = 1
+  zoom.value = DEFAULT_ZOOM
 }
 
 const active = computed(() =>
@@ -174,15 +191,17 @@ onUnmounted(() => {
   <div class="cms-panel">
     <h3 class="cms-panel__title">Panorama-layout — foto's mooi laten aansluiten</h3>
     <p style="color: #666; margin-top: 0; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-      <span>Sleep een foto vrij in alle richtingen, of gebruik <kbd>← ↑ → ↓</kbd> (Shift = 10px). Scroll met je muiswiel om in/uit te zoomen.</span>
+      <span>Sleep een foto vrij in alle richtingen, of gebruik <kbd>← ↑ → ↓</kbd> (Shift = 10px). Scroll met je muiswiel om opzij te schuiven, houd <kbd>Shift</kbd> vast om op en neer te scrollen (handig bij inzoomen).</span>
       <span class="layout-editor__zoom">
         Zoom: <strong>{{ zoomPercent }}%</strong>
+        <button type="button" @click="zoomOut">−</button>
+        <button type="button" @click="zoomIn">+</button>
         <button type="button" @click="resetZoom">Reset</button>
       </span>
     </p>
 
     <div ref="editorRef" class="layout-editor" tabindex="0" @wheel="onWheel" @keydown="onKeyDown">
-      <div class="layout-editor__scroll">
+      <div ref="scrollRef" class="layout-editor__scroll">
         <div class="layout-editor__strip" :style="{ zoom }">
           <div
             v-for="tile in working"

@@ -53,6 +53,19 @@ function resetData() {
   if (!confirm('Alle lokale wijzigingen verwijderen en terug naar de mock-data?')) return
   store.resetNaarMock()
 }
+
+function exporteerJson() {
+  const json = JSON.stringify(store.sorted, null, 2)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'panorama-data.json'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
 </script>
 
 <template>
@@ -66,6 +79,7 @@ function resetData() {
         <input id="search" v-model="search" type="search" placeholder="Catalogusnummer of beschrijving..." @input="page = 1" />
       </div>
       <div class="cms-btn-row">
+        <button class="cms-btn cms-btn--ghost" @click="exporteerJson">Exporteer data (JSON)</button>
         <button class="cms-btn cms-btn--ghost" @click="resetData">Reset data</button>
         <button class="cms-btn cms-btn--primary" @click="nieuw">+ Nieuw artikel</button>
       </div>

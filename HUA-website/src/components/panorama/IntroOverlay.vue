@@ -1,7 +1,9 @@
 <script setup>
 import { useIntroStore } from '@/stores/intro'
+import { useLangStore } from '@/stores/lang'
 
 const intro = useIntroStore()
+const lang = useLangStore()
 
 function handleOverlayClick(event) {
   if (event.target === event.currentTarget) {
@@ -13,37 +15,25 @@ function handleOverlayClick(event) {
 <template>
   <div v-if="intro.visible" class="intro-overlay" @click="handleOverlayClick">
     <div class="intro-modal">
-      <button class="intro-close" type="button" aria-label="Sluit uitleg" @click="intro.sluit">×</button>
+      <button class="intro-close" type="button" :aria-label="lang.t('intro.closeAria')" @click="intro.sluit">×</button>
 
-      <h2>Panorama van Utrecht – Uitleg</h2>
+      <h2>{{ lang.t('intro.title') }}</h2>
       <ul>
-        <li>Gebruik de pijltjes links en rechts om door het panorama te schuiven.</li>
-        <li>Klik in de minimap rechtsonder om snel naar een andere plek te springen.</li>
-        <li>Dubbelklik op het panorama om in of uit te zoomen op de plek waar je klikt.</li>
-        <li>Gebruik de knoppen <strong>+</strong> en <strong>−</strong> om verder in of uit te zoomen.</li>
-        <li>Klik op het scherm-icoon om het panorama op leperello focus scherm te bekijken.</li>
-        <li>Klik op het vraag-icoon om de instructie weer te zien.</li>
-        <li>Klik op het Richtpunt-icoon om de hotspots aan/uit te zetten.</li>
-        <li>Klik op de rode hotspots voor extra informatie.</li>
+        <li v-for="(item, i) in lang.t('intro.items')" :key="i">{{ item }}</li>
       </ul>
 
       <hr />
 
-      <h3>Colofon</h3>
+      <h3>{{ lang.t('intro.colofonTitle') }}</h3>
+      <p v-html="lang.t('intro.colofonBody')"></p>
       <p>
-        <strong>Panorama van Utrecht</strong> – titelpagina van het panorama, getekend op lithostenen
-        door <strong>J. Bos</strong>, gedrukt bij <strong>P.W. van de Weijer</strong> en in juli 1859
-        uitgegeven door <strong>Wed. Herfkens en Zoon</strong>.
+        <strong>{{ lang.t('intro.catalogusLabel') }}</strong> 135001<br />
+        <strong>{{ lang.t('intro.dateringLabel') }}</strong> {{ lang.t('intro.dateringValue') }}
       </p>
       <p>
-        <strong>Catalogusnummer:</strong> 135001<br />
-        <strong>Datering:</strong> 1859 (01-01-1859 – 31-12-1859)
+        <strong>{{ lang.t('intro.auteursrechtLabel') }}</strong> {{ lang.t('intro.auteursrechtValue') }}
       </p>
-      <p>
-        <strong>Auteursrecht:</strong> Publiek Domein 1.0 – u mag dit beeld downloaden, delen,
-        kopiëren en bewerken, ook voor commerciële doeleinden.
-      </p>
-      <button class="intro-ok" type="button" @click="intro.sluit">Ik begrijp het</button>
+      <button class="intro-ok" type="button" @click="intro.sluit">{{ lang.t('intro.ok') }}</button>
     </div>
   </div>
 </template>

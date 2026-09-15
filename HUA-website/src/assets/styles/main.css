@@ -107,7 +107,8 @@ body {
 
 .main-nav__list span:hover,
 .contact_nav a:hover,
-.english_nav a:hover {
+.english_nav a:hover,
+.main-nav__lang-toggle:hover {
     text-decoration: underline;
 }
 
@@ -128,9 +129,11 @@ body {
     font-size: 1.1rem;
 }
 
-.english_nav a {
+.english_nav a,
+.main-nav__lang-toggle {
     font-weight: normal;
     font-size: 1.1rem;
+    font-family: inherit;
 }
 
 .main-nav__link--plain,
@@ -449,6 +452,51 @@ body {
     animation: playPulse 1.2s infinite ease-in-out;
 }
 
+.pano-play-wrap {
+    position: relative;
+}
+
+.pano-speed {
+    position: absolute;
+    top: 0;
+    right: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 4px;
+    padding: 2px;
+    white-space: nowrap;
+}
+
+.pano-speed__btn {
+    width: 22px;
+    height: 26px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pano-speed__btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.pano-speed__value {
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
 @keyframes playPulse {
     0% {
         transform: scale(1);
@@ -463,14 +511,25 @@ body {
     }
 }
 
-/* standaard transform-origin; bij zoom via dubbelklik wordt dit overschreven */
-.panorama-fotos {
-    transform-origin: center center;
+/* .panorama-fotos is het vaste, scrollbare kijkvenster; .panorama-fotos-track erin wordt
+   geschaald via CSS `zoom` (zie trackStyle in PanoramaViewer.vue) zodat inzoomen ook echt
+   meer scrollbare ruimte oplevert — daardoor is elk deel van de hele leperello bereikbaar
+   via scrollen/slepen, niet alleen het stukje dat al zichtbaar was bij het inzoomen. */
+.panorama-fotos-track {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: max-content;
+    transform-origin: top left;
 }
 
 .panorama-fotos.zoomed {
-    transform-origin: var(--zoom-x) var(--zoom-y);
-    transition: transform 0.25s ease;
+    cursor: grab;
+}
+
+.panorama-fotos.zoomed.is-panning {
+    cursor: grabbing;
+    user-select: none;
 }
 
 /* ? Help knop */
@@ -550,13 +609,45 @@ body {
 }
 
 .panorama-fotos {
-    display: flex;
-    flex-direction: row;
     position: relative;
     height: 840px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-behavior: smooth;
+    /* Eigen stacking-context: zonder dit "ontsnapt" een foto met een negatieve z-index
+       (bv. door vaak op "naar achteren" te klikken in de CMS) achter de achtergrondkleur
+       van .panorama, waardoor hij onzichtbaar/wit lijkt in plaats van gewoon achteraan
+       in de rij te liggen. */
+    isolation: isolate;
+}
+
+/* Echt volledig scherm: panorama, inhoud en foto's vullen exact de hele viewport, randloos.
+   !important nodig omdat de responsive media query hieronder (max-width: 1024px)
+   .panorama en .panorama-fotos zelf ook met !important verkleint (transform: scale(0.8), height: auto).
+   Let op: alleen het standaard :fullscreen wordt gebruikt (Chrome/Edge/Firefox/Safari 16.4+ ondersteunen
+   dit allemaal al) en NIET gecombineerd met verouderde vendor-prefixen via komma's — een browser die
+   zo'n onbekende pseudo-class (bv. :-moz-full-screen) tegenkomt in een gecombineerde selector laat
+   anders de HELE regel vallen, ook het deel dat hij wél begrijpt. */
+.panorama:fullscreen {
+    height: 100vh !important;
+    width: 100vw !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    background: var(--gray);
+}
+
+.panorama:fullscreen .panorama-content {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    left: 0 !important;
+}
+
+.panorama:fullscreen .panorama-img-wrapper {
+    /* Schuift de rij als geheel iets omhoog (neutrale basiswaarde 100px in de referentieruimte,
+       schaalt automatisch mee dankzij de zoom hierboven) zodat er geen lege strook bovenaan blijft. */
+    transform: translateY(-100px);
 }
 
 .panorama-img-wrapper {
@@ -738,6 +829,15 @@ body {
     font-size: 0.95rem;
 }
 
+.info-image {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+}
+
 .info-title {
     margin: 0 0 1rem;
     font-size: 1.45rem;
@@ -881,6 +981,32 @@ body {
     font-style: italic;
 }
 
+.footer-lang-toggle {
+    position: relative;
+    text-decoration: none;
+    color: var(--black);
+    padding-left: 1.25rem;
+    display: inline-block;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.footer-lang-toggle::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--red);
+}
+
+.footer-lang-toggle:hover {
+    text-decoration: underline;
+}
+
 .footer-contact-list {
     list-style: none;
     margin: 0 0 1.5rem;
@@ -1008,7 +1134,8 @@ body {
     }
 
     .contact_nav a,
-    .english_nav a {
+    .english_nav a,
+    .main-nav__lang-toggle {
         font-size: 0.95rem;
     }
 

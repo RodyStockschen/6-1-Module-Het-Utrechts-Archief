@@ -56,6 +56,7 @@ export const translations = {
       help: 'Help',
       waypoints: 'Waypoints aan/uit',
       play: 'Automatisch afspelen',
+      pause: 'Pauzeren',
     },
   },
   en: {
@@ -115,6 +116,7 @@ export const translations = {
       help: 'Help',
       waypoints: 'Toggle waypoints',
       play: 'Auto-play',
+      pause: 'Pause',
     },
   },
 }

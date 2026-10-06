@@ -86,8 +86,12 @@ function onPanMouseMove(event) {
 }
 
 function onPanMouseUp() {
+  // Deze listener zit op document en vuurt dus bij élke klik (ook op de snelheidsknoppen).
+  // Zonder deze check werd scroll-behavior dan teruggezet naar smooth terwijl play liep,
+  // waardoor elke scrollLeft-stap een afgebroken smooth-animatie werd en de snelheid vastliep.
+  if (!panState.value) return
   const el = scrollerRef.value
-  if (panState.value?.moved) {
+  if (panState.value.moved) {
     el?.classList.remove('is-panning')
     stopPlay()
   }

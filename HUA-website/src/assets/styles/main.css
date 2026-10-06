@@ -218,6 +218,11 @@ body {
 .search-bar[hidden] {
     opacity: 0;
     height: 0;
+    /* display: flex overschrijft [hidden], dus het onzichtbare zoekveld stak onder de header uit
+       en ving klikken af (bijv. op het kruisje van het infopaneel) */
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .search-bar__form {
@@ -449,7 +454,18 @@ body {
 }
 
 .pano-btn.pano-play.is-playing {
-    animation: playPulse 1.2s infinite ease-in-out;
+    background-image: none;
+}
+
+/* pauze-icoon: twee balkjes */
+.pano-btn.pano-play.is-playing::before,
+.pano-btn.pano-play.is-playing::after {
+    content: "";
+    width: 5px;
+    height: 16px;
+    margin: 0 2px;
+    background: #fff;
+    border-radius: 1px;
 }
 
 .pano-play-wrap {
@@ -460,19 +476,22 @@ body {
     position: absolute;
     top: 0;
     right: 44px;
+    box-sizing: border-box;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 2px;
     background: rgba(0, 0, 0, 0.55);
     border-radius: 4px;
-    padding: 2px;
+    padding: 0 4px;
     white-space: nowrap;
 }
 
 .pano-speed__btn {
-    width: 22px;
-    height: 26px;
+    width: 24px;
+    height: 28px;
+    padding: 0;
     border: none;
     border-radius: 3px;
     background: transparent;

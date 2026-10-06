@@ -39,7 +39,7 @@ defineEmits([
         type="button"
         class="pano-btn pano-play"
         :class="{ 'is-playing': isPlaying }"
-        :aria-label="lang.t('controls.play')"
+        :aria-label="lang.t(isPlaying ? 'controls.pause' : 'controls.play')"
         @click.stop="$emit('toggle-play')"
       ></button>
       <div v-if="isPlaying" class="pano-speed">

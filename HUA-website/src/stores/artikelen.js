@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase, supabaseEnabled } from '@/composables/useSupabase'
-import { artikelenMock } from '@/data/artikelenMock'
+import { artikelenMock, MOCK_VERSIE } from '@/data/artikelenMock'
 
 const STORAGE_KEY = 'huaCmsLocalArtikelen'
+const VERSIE_KEY = 'huaCmsMockVersie'
 const CHANNEL_NAME = 'hua-artikelen-sync'
 
 function migreer(artikel) {
@@ -38,6 +39,11 @@ function migreer(artikel) {
 
 function loadLocal() {
   try {
+    // Lokale data van vóór de huidige mock-export is verouderd → negeren
+    if (localStorage.getItem(VERSIE_KEY) !== MOCK_VERSIE) {
+      localStorage.removeItem(STORAGE_KEY)
+      localStorage.setItem(VERSIE_KEY, MOCK_VERSIE)
+    }
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) return JSON.parse(raw).map(migreer)
   } catch {}

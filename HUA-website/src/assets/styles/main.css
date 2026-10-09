@@ -663,6 +663,27 @@ body {
     left: 0 !important;
 }
 
+/* .panorama-fotos heeft normaal een vaste height van 840px; in fullscreen schaalt de
+   track-zoom de foto's op tot schermhoogte, maar de scrollable viewport bleef op 840px staan —
+   waardoor de onderste ~240px van elke foto werd afgesneden. Daarom in fullscreen de
+   viewer-hoogte vullen minus de ruimte die de minimap-strip onderaan nodig heeft.
+   fsZoom in PanoramaViewer.vue reserveert dezelfde ruimte zodat de foto's precies passen. */
+.panorama:fullscreen .panorama-fotos {
+    height: calc(100% - 90px) !important;
+}
+
+/* In fullscreen de minimap uit zijn absolute overlay-positie halen zodat hij als normaal
+   blok onder de panorama-foto's komt. Zonder deze regel zat de thumbnail-strip over de
+   onderkant van het beeld heen en bedekte hotspots. */
+.panorama:fullscreen .minimap-bottom {
+    position: relative;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    margin: 0;
+    height: 90px;
+}
+
 .panorama:fullscreen .panorama-img-wrapper {
     /* Schuift de rij als geheel iets omhoog (neutrale basiswaarde 100px in de referentieruimte,
        schaalt automatisch mee dankzij de zoom hierboven) zodat er geen lege strook bovenaan blijft. */
@@ -1217,6 +1238,7 @@ body {
         gap: 2rem;
     }
 }
+
 
 @media (max-width: 768px) {
     .header-inner {

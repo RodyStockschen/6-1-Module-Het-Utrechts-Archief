@@ -179,9 +179,16 @@ function toggleFullscreen() {
 // neutrale margin_top (100, zie translateY in main.css) precies de volledige schermhoogte vult
 // en de foto's onderling evenredig blijven aansluiten zoals in de leperello.
 const FOTO_REF_HEIGHT = 665
+// In fullscreen staat de minimap-strip onder de panorama (zie main.css); deze ruimte dus
+// aftrekken van de beschikbare hoogte, anders wordt de onderkant van de foto's weggesneden.
+const FULLSCREEN_MINIMAP_HEIGHT = 90
 
 function updateFsZoom() {
-  fsZoom.value = document.fullscreenElement ? window.innerHeight / FOTO_REF_HEIGHT : 1
+  if (document.fullscreenElement) {
+    fsZoom.value = (window.innerHeight - FULLSCREEN_MINIMAP_HEIGHT) / FOTO_REF_HEIGHT
+  } else {
+    fsZoom.value = 1
+  }
 }
 
 function onFullscreenChange() {
